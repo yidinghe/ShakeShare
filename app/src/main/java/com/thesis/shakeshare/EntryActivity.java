@@ -8,9 +8,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.example.shakeshare.R;
+import com.thesis.domain.User;
 import com.thesis.extractKey.FFT;
 import com.thesis.extractKey.Functions;
 import com.thesis.login.ContactsActivity;
+import com.thesis.util.Utils;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -33,9 +35,10 @@ import android.widget.Toast;
 
 public class EntryActivity extends Activity {
 
-    public static final String TAG = "Shake&Share";
     private String username;
     private String contactname;
+    private User mUser;
+    private User mContactUser;
 
     private SensorManager mSensorManager;
     private Sensor linear_accelerometer;
@@ -57,8 +60,11 @@ public class EntryActivity extends Activity {
         setContentView(R.layout.activity_entry);
 
         Intent intent = getIntent();
-        username = intent.getStringExtra("username");
-        contactname = intent.getStringExtra("contactname");
+        mUser = intent.getParcelableExtra("user");
+        mContactUser = intent.getParcelableExtra("contactUser");
+        username = mUser.getName();
+        contactname = mContactUser.getName();
+
         mAccuData.add(new ArrayList<Float>());
         mAccuData.add(new ArrayList<Float>());
         mAccuData.add(new ArrayList<Float>());
@@ -227,7 +233,7 @@ public class EntryActivity extends Activity {
         Builder builder = new Builder(EntryActivity.this);
         builder.setTitle("Shake Well");
         /*
-		mkeySb.append("Your Key is" + '\n' + "X axis: "
+        mkeySb.append("Your Key is" + '\n' + "X axis: "
 				+ FFT.peakFft(mAccuData.get(0)) + '\n' + "Y axis : "
 				+ FFT.peakFft(mAccuData.get(1)) + '\n' + "Z axis : "
 				+ FFT.peakFft(mAccuData.get(2)));
@@ -249,13 +255,14 @@ public class EntryActivity extends Activity {
                 .setPositiveButton("Confirm", new OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Log.d(TAG, "KEY:" + mkeySb.toString());
+                        Log.d(Utils.TAG, "KEY:" + mkeySb.toString());
                         Intent intent_contacts = new Intent(EntryActivity.this,
                                 ContactsActivity.class);
-                        intent_contacts.putExtra("username", username);
+                        intent_contacts.putExtra("user", mUser);
                         startActivity(intent_contacts);
                         overridePendingTransition(R.anim.slide_in_left,
                                 R.anim.slide_out_right);
+                        finish();
                     }
                 })
                 .setNeutralButton("Redo", new OnClickListener() {
@@ -263,12 +270,10 @@ public class EntryActivity extends Activity {
                     public void onClick(DialogInterface dialog, int which) {
                         Intent intent = new Intent(EntryActivity.this,
                                 EntryActivity.class);
-                        Bundle extras = new Bundle();
-                        extras.putString("username", username);
-                        extras.putString("contactname", contactname);
-                        intent.putExtras(extras);
+                        intent.putExtra("user", mUser);
+                        intent.putExtra("contactUser", mContactUser);
                         startActivity(intent);
-//						finish();
+                        finish();
 //						dialog.dismiss();
                     }
                 })
@@ -277,11 +282,11 @@ public class EntryActivity extends Activity {
                     public void onClick(DialogInterface dialog, int which) {
                         Intent intent_contacts = new Intent(EntryActivity.this,
                                 ContactsActivity.class);
-                        intent_contacts.putExtra("username", username);
+                        intent_contacts.putExtra("user", mUser);
                         startActivity(intent_contacts);
                         overridePendingTransition(R.anim.slide_in_left,
                                 R.anim.slide_out_right);
-//						finish();
+                        finish();
 //						dialog.dismiss();
                     }
                 });

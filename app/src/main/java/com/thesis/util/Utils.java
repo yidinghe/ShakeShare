@@ -19,6 +19,8 @@ public class Utils {
 
     public static final String SECRET_KEY = "2F1F2E09-7B33-B343-FF65-3F7322662800";
 
+    public static final int REQUEST_CODE_GENERATE_KEY = 1001;
+
     final protected static char[] hexArray = "0123456789ABCDEF".toCharArray();
 
     public static String getDeviceIpAddress(Context context) {

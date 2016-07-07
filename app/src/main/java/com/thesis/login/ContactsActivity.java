@@ -155,23 +155,16 @@ public class ContactsActivity extends Activity implements OnClickListener {
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo menuInfo;
         menuInfo = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        final String contactname = contacts.get(menuInfo.position).getName();
+        final User contactUser = contacts.get(menuInfo.position);
         switch (item.getItemId()) {
             case Menu.FIRST:
-                editContactName(contactname);
+                //  editContactName(contactname);
                 break;
             case Menu.FIRST + 1:
-                deleteContact(contactname);
+                // deleteContact(contactname);
                 break;
             case Menu.FIRST + 2:
-//                Intent intent = new Intent(this, EntryActivity.class);
-//                Bundle extras = new Bundle();
-//                extras.putString("username", username);
-//                extras.putString("contactname", contactname);
-//                intent.putExtras(extras);
-//                startActivity(intent);
-//                overridePendingTransition(R.anim.slide_in_right,
-//                        R.anim.slide_out_left);
+                startGenerateKeyActivity(contactUser);
                 break;
             case Menu.FIRST + 3:
 //                Intent intent_message = new Intent(this, MessageActivity.class);
@@ -182,6 +175,21 @@ public class ContactsActivity extends Activity implements OnClickListener {
                 break;
         }
         return super.onContextItemSelected(item);
+    }
+
+    private void startGenerateKeyActivity(User contactUser) {
+        Intent intent = new Intent(this, EntryActivity.class);
+        intent.putExtra("user", mUser);
+        intent.putExtra("contactUser", contactUser);
+        startActivityForResult(intent, Utils.REQUEST_CODE_GENERATE_KEY);
+        startActivity(intent);
+        overridePendingTransition(R.anim.slide_in_right,
+                R.anim.slide_out_left);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     private void editContactName(final String contactname) {
