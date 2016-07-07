@@ -59,7 +59,7 @@ public class SignInActivity extends BaseActivity implements OnClickListener {
         String password = mEditTextPassword.getText().toString().trim();
         if (TextUtils.isEmpty(username) || TextUtils.isEmpty(password)) {
             Toast.makeText(SignInActivity.this,
-                    "Please input username and password", 0).show();
+                    "Please input username and password", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -100,15 +100,30 @@ public class SignInActivity extends BaseActivity implements OnClickListener {
         sendToastOnUIThread("SignIn Fail " + user.getName() + ", please try again");
     }
 
-    private void signInSuccess(User user) {
-        sendToastOnUIThread("Welcome back " + user.getName());
-        Intent intent_contacts = new Intent(SignInActivity.this,
-                ContactsActivity.class);
-        intent_contacts.putExtra("signInUser", user);
-        startActivity(intent_contacts);
-        finish();
-        overridePendingTransition(R.anim.slide_in_right,
-                R.anim.slide_out_left);
+    private void signInSuccess(final User user) {
+        //update user ipAddress
+        user.setIpAddress(Utils.getDeviceIpAddress(SignInActivity.this));
+        Backendless.Persistence.save(user, new AsyncCallback<User>() {
+            @Override
+            public void handleResponse(User response) {
+                Log.d(Utils.TAG, "signInSuccess, handleFault:" + response.toString());
+
+                sendToastOnUIThread("Welcome back " + user.getName());
+                Intent intent_contacts = new Intent(SignInActivity.this,
+                        ContactsActivity.class);
+                intent_contacts.putExtra("signInUser", response);
+                startActivity(intent_contacts);
+                finish();
+                overridePendingTransition(R.anim.slide_in_right,
+                        R.anim.slide_out_left);
+            }
+
+            @Override
+            public void handleFault(BackendlessFault fault) {
+                Log.d(Utils.TAG, "signInSuccess, handleFault:" + fault.toString());
+            }
+        });
+
     }
 
 }

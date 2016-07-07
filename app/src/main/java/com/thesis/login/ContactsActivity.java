@@ -26,6 +26,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -62,14 +63,6 @@ public class ContactsActivity extends Activity implements OnClickListener {
         bt_add_contact.setOnClickListener(this);
 
         lv = (ListView) findViewById(R.id.lv);
-        /*
-         * LinearLayout ll_root = (LinearLayout) findViewById(R.id.ll_root);
-		 * ContactDao dao = new ContactDao(this); List<Contact> contacts =
-		 * dao.findAll(); for(Contact contact:contacts){ String info =
-		 * contact.toString(); TextView tv = new TextView(this);
-		 * tv.setTextSize(20); tv.setTextColor(Color.BLACK); tv.setText(info);
-		 * ll_root.addView(tv); }
-		 */
 
         getAllUsers();
 
@@ -89,7 +82,7 @@ public class ContactsActivity extends Activity implements OnClickListener {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-
+                        updateListView();
                     }
                 });
             }
@@ -101,12 +94,36 @@ public class ContactsActivity extends Activity implements OnClickListener {
         });
     }
 
-    private void updateListView(){
-//        lv.setAdapter(new SimpleAdapter(this, contacts, R.layout.list_item,
-//                new String[]{ contacts.g, "iconid"}, new int[]{R.id.tv,
-//                R.id.iv}));
-//
-//        this.registerForContextMenu(lv);
+    private void updateListView() {
+        lv.setAdapter(new MyAdapter());
+        this.registerForContextMenu(lv);
+    }
+
+    private class MyAdapter extends BaseAdapter {
+
+        @Override
+        public int getCount() {
+            return contacts.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return contacts.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            View view = LayoutInflater.from(getApplicationContext()).inflate(R.layout.list_item, null);
+            TextView textView = (TextView) view.findViewById(R.id.tv);
+            User contactUser = contacts.get(position);
+            textView.setText(contactUser.getName() + "..." + contactUser.getIpAddress());
+            return view;
+        }
     }
 
 
