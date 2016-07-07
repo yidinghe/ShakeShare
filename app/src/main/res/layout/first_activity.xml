@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F5F5F5"
+    android:orientation="vertical"
+    tools:context="com.thesis.login.FirstActivity">
+
+    <ImageView
+        android:id="@+id/ic_launcher"
+        android:layout_width="wrap_content"
+        android:layout_height="300dp"
+        android:contentDescription="@string/ic_launcher"
+        android:src="@drawable/ic_launcher" />
+
+    <Button
+        android:id="@+id/bt_sign_in"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ic_launcher"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/mbutton_background"
+        android:text="@string/sign_in"
+        android:textSize="20sp" />
+
+    <Button
+        android:id="@+id/bt_sign_up"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/bt_sign_in"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/mbutton_background"
+        android:text="@string/sign_up"
+        android:textSize="20sp" />
+
+    <Button
+        android:id="@+id/bt_users"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/bt_sign_up"
+        android:layout_centerVertical="true"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/mbutton_background"
+        android:text="@string/users"
+        android:textSize="20sp" />
+
+</RelativeLayout>

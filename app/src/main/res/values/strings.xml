@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">ShakeShare</string>
+    <string name="ic_launcher">ic_launcher</string>
+    <string name="sign_in">Sign In</string>
+    <string name="sign_up">Create Account</string>
+    <string name="action_settings">Exit</string>
+    <string name="welcome">Welcome</string>
+	<string name="username">Username</string>
+	<string name="password">Password</string>
+	<string name="confirm_password">Confirm password</string>
+	<string name="back">Back</string>
+	<string name="contacts">Contacts</string>
+	<string name="users">Users</string>
+	<string name="delete_users">Delete all the users</string>
+	<string name="add_contact">New Contact</string>
+	<string name="sign_out">Sign out</string>
+	<string name="input_contact_name">Please input new contact name</string>
+	<string name="cancel">Cancel</string>
+	<string name="save">Save</string>
+	<string name="btn_send">Send</string>
+</resources>

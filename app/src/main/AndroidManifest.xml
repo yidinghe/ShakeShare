@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.shakeshare"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <instrumentation
+        android:name="android.test.InstrumentationTestRunner"
+        android:targetPackage="com.example.shakeshare" />
+
+    <uses-sdk
+        android:minSdkVersion="16"
+        android:targetSdkVersion="19" />
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <uses-library android:name="android.test.runner" />
+
+        <activity
+            android:name="com.thesis.login.FirstActivity"
+            android:label="@string/welcome"
+            android:screenOrientation="portrait" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.thesis.login.SignUpActivity"
+            android:label="@string/sign_up"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="com.thesis.login.SignInActivity"
+            android:label="@string/sign_in"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="com.thesis.login.UsersActivity"
+            android:label="@string/users"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="com.thesis.login.ContactsActivity"
+            android:label="@string/contacts"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="com.thesis.login.ArrayActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="com.thesis.shakeshare.EntryActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="com.thesis.sms.MessageActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait" >
+        </activity>
+    </application>
+
+</manifest>
