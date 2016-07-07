@@ -256,12 +256,9 @@ public class EntryActivity extends Activity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Log.d(Utils.TAG, "KEY:" + mkeySb.toString());
-                        Intent intent_contacts = new Intent(EntryActivity.this,
-                                ContactsActivity.class);
-                        intent_contacts.putExtra("user", mUser);
-                        startActivity(intent_contacts);
-                        overridePendingTransition(R.anim.slide_in_left,
-                                R.anim.slide_out_right);
+                        Intent returnIntent = new Intent(EntryActivity.this, ContactsActivity.class);
+                        returnIntent.putExtra("signInUser", mUser);
+                        setResult(Activity.RESULT_OK, returnIntent);
                         finish();
                     }
                 })
@@ -280,12 +277,8 @@ public class EntryActivity extends Activity {
                 .setNegativeButton("Cancel", new OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Intent intent_contacts = new Intent(EntryActivity.this,
-                                ContactsActivity.class);
-                        intent_contacts.putExtra("user", mUser);
-                        startActivity(intent_contacts);
-                        overridePendingTransition(R.anim.slide_in_left,
-                                R.anim.slide_out_right);
+                        Intent returnIntent = new Intent(EntryActivity.this, ContactsActivity.class);
+                        setResult(Activity.RESULT_CANCELED, returnIntent);
                         finish();
 //						dialog.dismiss();
                     }

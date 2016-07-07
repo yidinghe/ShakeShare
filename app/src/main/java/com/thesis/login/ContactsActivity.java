@@ -189,7 +189,14 @@ public class ContactsActivity extends Activity implements OnClickListener {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+        switch (resultCode) {
+            case Activity.RESULT_OK:
+                Log.d(Utils.TAG, "onActivityResult,Activity.RESULT_OK.");
+                break;
+            case Activity.RESULT_CANCELED:
+                Log.d(Utils.TAG, "onActivityResult,Activity.RESULT_CANCELED.");
+                break;
+        }
     }
 
     private void editContactName(final String contactname) {
