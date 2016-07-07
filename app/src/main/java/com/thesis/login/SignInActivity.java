@@ -80,7 +80,7 @@ public class SignInActivity extends BaseActivity implements OnClickListener {
                     for (User serverUser : data) {
                         if (serverUser.getPassword().equals(user.getPassword())) {
                             Log.d(Utils.TAG, "checkUserExist, user exist:");
-                            signInSuccess(user);
+                            signInSuccess(serverUser);
                             return;
                         }
                     }
@@ -104,9 +104,9 @@ public class SignInActivity extends BaseActivity implements OnClickListener {
         sendToastOnUIThread("Welcome back " + user.getName());
         Intent intent_contacts = new Intent(SignInActivity.this,
                 ContactsActivity.class);
-        finish();
-        intent_contacts.putExtra("username", user.getName());
+        intent_contacts.putExtra("signInUser", user);
         startActivity(intent_contacts);
+        finish();
         overridePendingTransition(R.anim.slide_in_right,
                 R.anim.slide_out_left);
     }

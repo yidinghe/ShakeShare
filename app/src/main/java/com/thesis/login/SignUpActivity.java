@@ -124,7 +124,7 @@ public class SignUpActivity extends BaseActivity implements OnClickListener {
             public void handleResponse(User response) {
                 Log.d(Utils.TAG, "createNewUser, handleResponse:" + response.toString());
                 sendToastOnUIThread("createNewUser success, welcome " + user.getName());
-                //TODO GO TO Contacts Page
+                signInSuccess(response);
             }
 
             @Override
@@ -134,5 +134,14 @@ public class SignUpActivity extends BaseActivity implements OnClickListener {
         });
     }
 
-
+    private void signInSuccess(User user) {
+        sendToastOnUIThread("Welcome back " + user.getName());
+        Intent intent_contacts = new Intent(this,
+                ContactsActivity.class);
+        intent_contacts.putExtra("signInUser", user);
+        startActivity(intent_contacts);
+        finish();
+        overridePendingTransition(R.anim.slide_in_right,
+                R.anim.slide_out_left);
+    }
 }
