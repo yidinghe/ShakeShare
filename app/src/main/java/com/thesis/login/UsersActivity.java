@@ -3,8 +3,7 @@ package com.thesis.login;
 import java.util.List;
 
 import com.example.shakeshare.R;
-import com.thesis.db.dao.User;
-import com.thesis.db.dao.UserDao;
+import com.thesis.domain.User;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -25,8 +24,7 @@ public class UsersActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.users_activity);
 		lv = (ListView) findViewById(R.id.lv);
-		UserDao dao = new UserDao(this);
-		users = dao.findAll();
+
 		lv.setAdapter(new MyAdapter());
 	}
 
@@ -66,8 +64,6 @@ public class UsersActivity extends Activity {
 	}
 
 	public void delete_users(View view) {
-		UserDao dao = new UserDao(this);
-		dao.deleteAll();
 		Toast.makeText(UsersActivity.this, "All the users have been deleted", 0)
 				.show();
 		onCreate(null);

@@ -6,8 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.example.shakeshare.R;
-import com.thesis.db.dao.Contact;
-import com.thesis.db.dao.ContactDao;
+import com.thesis.domain.Contact;
 import com.thesis.shakeshare.EntryActivity;
 import com.thesis.sms.MessageActivity;
 
@@ -30,12 +29,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-import android.widget.Toast;
 
 public class ContactsActivity extends Activity implements OnClickListener {
 	private ListView lv;
 	private List<Contact> contacts;
-	private ContactDao dao;
 	private String username;
 	private List<Map<String, Object>> data;
 	private Map<String, Object> map;
@@ -52,8 +49,6 @@ public class ContactsActivity extends Activity implements OnClickListener {
 		bt_back2_first.setOnClickListener(this);
 		bt_add_contact.setOnClickListener(this);
 
-		dao = new ContactDao(this);
-		contacts = dao.findAll(username);
 		lv = (ListView) findViewById(R.id.lv);
 		/*
 		 * LinearLayout ll_root = (LinearLayout) findViewById(R.id.ll_root);
@@ -68,7 +63,6 @@ public class ContactsActivity extends Activity implements OnClickListener {
 
 		data = new ArrayList<Map<String, Object>>();
 
-		putContact2Map();
 
 		lv.setAdapter(new SimpleAdapter(this, data, R.layout.list_item,
 				new String[] { "contactname", "iconid" }, new int[] { R.id.tv,
@@ -105,18 +99,6 @@ public class ContactsActivity extends Activity implements OnClickListener {
 	// }
 	// }
 
-	private void putContact2Map() {
-		for (Contact contact : contacts) {
-			map = new HashMap<String, Object>();
-			map.put("contactname", contact.getName() + contact.getKey());
-			if (contact.getKey() == null) {
-				map.put("iconid", R.drawable.btn_rating_star_off_normal);
-			} else {
-				map.put("iconid", R.drawable.btn_rating_star_off_pressed);
-			}
-			data.add(map);
-		}
-	}
 
 	public void onClick(View v) {
 		switch (v.getId()) {
@@ -185,13 +167,6 @@ public class ContactsActivity extends Activity implements OnClickListener {
 				new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int whichButton) {
-						String newname = input.getText().toString();
-						if (!dao.find(username, newname)) {
-							dao.updateName(username,contactname,newname);
-						} else {
-							Toast.makeText(ContactsActivity.this,
-									"Contact already exists", 0).show();
-						}
 						onCreate(null);
 					}
 				});
@@ -216,7 +191,6 @@ public class ContactsActivity extends Activity implements OnClickListener {
 			@Override
 			public void onClick(DialogInterface dialog,
 					int whichButton) {
-				dao.delete(username, contactname);
 				onCreate(null);
 			}
 		}).setNegativeButton("Cancle", null).show();
@@ -238,12 +212,6 @@ public class ContactsActivity extends Activity implements OnClickListener {
 					@Override
 					public void onClick(DialogInterface dialog, int whichButton) {
 						String contactname = input.getText().toString();
-						if (!dao.find(username, contactname)) {
-							dao.addContactName(contactname, username);
-						} else {
-							Toast.makeText(ContactsActivity.this,
-									"Contact already exists", Toast.LENGTH_SHORT).show();
-						}
 						onCreate(null);
 					}
 				});

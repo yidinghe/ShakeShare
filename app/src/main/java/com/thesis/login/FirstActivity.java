@@ -1,5 +1,6 @@
 package com.thesis.login;
 
+import com.backendless.Backendless;
 import com.example.shakeshare.R;
 import com.thesis.util.Utils;
 
@@ -28,6 +29,8 @@ public class FirstActivity extends Activity implements OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.first_activity);
+
+
         Button bt_sign_in = (Button) this.findViewById(R.id.bt_sign_in);
         Button bt_sign_up = (Button) this.findViewById(R.id.bt_sign_up);
         Button bt_users = (Button) this.findViewById(R.id.bt_users);
@@ -36,6 +39,8 @@ public class FirstActivity extends Activity implements OnClickListener {
         bt_users.setOnClickListener(this);
 
     }
+
+
 
     @Override
     public void onClick(View v) {

@@ -1,19 +1,28 @@
 package com.thesis.login;
 
+import com.backendless.Backendless;
+import com.backendless.BackendlessCollection;
+import com.backendless.async.callback.AsyncCallback;
+import com.backendless.exceptions.BackendlessFault;
 import com.example.shakeshare.R;
-import com.thesis.db.dao.UserDao;
+import com.thesis.BaseActivity;
+import com.thesis.domain.User;
+import com.thesis.util.Utils;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-public class SignInActivity extends Activity implements OnClickListener {
+import java.util.List;
+
+public class SignInActivity extends BaseActivity implements OnClickListener {
     private EditText mEditTextUsername;
     private EditText mEditTextPassword;
 
@@ -42,10 +51,7 @@ public class SignInActivity extends Activity implements OnClickListener {
     }
 
     private void back2_first_activity() {
-        Intent intent = new Intent(this, FirstActivity.class);
-        startActivity(intent);
         finish();
-        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
 
     private void start_sign_in_activity() {
@@ -56,28 +62,53 @@ public class SignInActivity extends Activity implements OnClickListener {
                     "Please input username and password", 0).show();
             return;
         }
-        UserDao dao = new UserDao(this);
-        try {
-            if (dao.findPassword(username).compareTo(password) != 0) {
-                Toast.makeText(SignInActivity.this,
-                        "Invalid username or password", 0).show();
-                return;
-            }
-            if (dao.findPassword(username).compareTo(password) == 0) {
-                Toast.makeText(SignInActivity.this, "Welcome back " + username,
-                        0).show();
-                Intent intent_contacts = new Intent(SignInActivity.this,
-                        ContactsActivity.class);
-                finish();
-                intent_contacts.putExtra("username", username);
-                startActivity(intent_contacts);
-                overridePendingTransition(R.anim.slide_in_right,
-                        R.anim.slide_out_left);
-            }
-        } catch (Exception e) {
-            Toast.makeText(SignInActivity.this,
-                    "Something Wrong with Database", 0).show();
-            return;
-        }
+
+        User signInUser = new User(username, password, Utils.getDeviceIpAddress(this));
+        checkUserExist(signInUser);
     }
+
+    private void checkUserExist(final User user) {
+
+        Backendless.Persistence.of(User.class).find(new AsyncCallback<BackendlessCollection<User>>() {
+            @Override
+            public void handleResponse(BackendlessCollection<User> response) {
+                Log.d(Utils.TAG, "checkUserExist, handleResponse:" + response.toString());
+                List<User> data = response.getData();
+                if (data == null || data.size() == 0) {
+                    sendToastOnUIThread("No user on the record, please create user.");
+                } else {
+                    for (User serverUser : data) {
+                        if (serverUser.getPassword().equals(user.getPassword())) {
+                            Log.d(Utils.TAG, "checkUserExist, user exist:");
+                            signInSuccess(user);
+                            return;
+                        }
+                    }
+                    signInFail(user);
+                }
+            }
+
+            @Override
+            public void handleFault(BackendlessFault fault) {
+                Log.d(Utils.TAG, "checkUserExist, handleFault:" + fault.toString());
+            }
+        });
+
+    }
+
+    private void signInFail(User user) {
+        sendToastOnUIThread("SignIn Fail " + user.getName() + ", please try again");
+    }
+
+    private void signInSuccess(User user) {
+        sendToastOnUIThread("Welcome back " + user.getName());
+        Intent intent_contacts = new Intent(SignInActivity.this,
+                ContactsActivity.class);
+        finish();
+        intent_contacts.putExtra("username", user.getName());
+        startActivity(intent_contacts);
+        overridePendingTransition(R.anim.slide_in_right,
+                R.anim.slide_out_left);
+    }
+
 }

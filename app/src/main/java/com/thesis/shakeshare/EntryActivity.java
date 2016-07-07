@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.example.shakeshare.R;
-import com.thesis.db.dao.ContactDao;
 import com.thesis.extractKey.FFT;
 import com.thesis.extractKey.Functions;
 import com.thesis.login.ContactsActivity;
@@ -32,14 +31,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import weborb.util.log.LogHelper;
-
 public class EntryActivity extends Activity {
 
     public static final String TAG = "Shake&Share";
     private String username;
     private String contactname;
-    private ContactDao dao;
 
     private SensorManager mSensorManager;
     private Sensor linear_accelerometer;
@@ -63,7 +59,6 @@ public class EntryActivity extends Activity {
         Intent intent = getIntent();
         username = intent.getStringExtra("username");
         contactname = intent.getStringExtra("contactname");
-        dao = new ContactDao(this);
         mAccuData.add(new ArrayList<Float>());
         mAccuData.add(new ArrayList<Float>());
         mAccuData.add(new ArrayList<Float>());
@@ -254,7 +249,6 @@ public class EntryActivity extends Activity {
                 .setPositiveButton("Confirm", new OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        dao.updateContactKey(mkeySb.toString(), contactname, username);
                         Log.d(TAG, "KEY:" + mkeySb.toString());
                         Intent intent_contacts = new Intent(EntryActivity.this,
                                 ContactsActivity.class);

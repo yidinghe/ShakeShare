@@ -1,4 +1,4 @@
-package com.thesis.db.dao;
+package com.thesis.domain;
 
 public class Contact {
 	private String name;
