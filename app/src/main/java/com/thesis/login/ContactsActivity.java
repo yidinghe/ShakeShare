@@ -48,7 +48,7 @@ public class ContactsActivity extends Activity implements OnClickListener {
 
     private User mUser;
 
-    private List<User> contacts = new ArrayList<>();
+    private List<Contact> contacts = new ArrayList<>();
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,7 +76,8 @@ public class ContactsActivity extends Activity implements OnClickListener {
                 List<User> data = response.getData();
                 for (User serverUser : data) {
                     if (!serverUser.getOwnerId().equals(mUser.getOwnerId())) {
-                        contacts.add(serverUser);
+                        Contact contact = new Contact(serverUser);
+                        contacts.add(contact);
                     }
                 }
                 runOnUiThread(new Runnable() {
@@ -120,7 +121,7 @@ public class ContactsActivity extends Activity implements OnClickListener {
         public View getView(int position, View convertView, ViewGroup parent) {
             View view = LayoutInflater.from(getApplicationContext()).inflate(R.layout.list_item, null);
             TextView textView = (TextView) view.findViewById(R.id.tv);
-            User contactUser = contacts.get(position);
+            User contactUser = contacts.get(position).getUser();
             textView.setText(contactUser.getName() + "..." + contactUser.getIpAddress());
             return view;
         }
@@ -155,7 +156,7 @@ public class ContactsActivity extends Activity implements OnClickListener {
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo menuInfo;
         menuInfo = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        final User contactUser = contacts.get(menuInfo.position);
+        final User contactUser = contacts.get(menuInfo.position).getUser();
         switch (item.getItemId()) {
             case Menu.FIRST:
                 //  editContactName(contactname);

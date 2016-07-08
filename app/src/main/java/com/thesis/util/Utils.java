@@ -23,8 +23,8 @@ public class Utils {
 
     final protected static char[] hexArray = "0123456789ABCDEF".toCharArray();
 
-    public static String getDeviceIpAddress(Context context) {
-        WifiManager wifiMan = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+    public static String getDeviceIpAddress() {
+        WifiManager wifiMan = (WifiManager) CommonLibs.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         WifiInfo wifiInf = wifiMan.getConnectionInfo();
         int ipAddress = wifiInf.getIpAddress();
         String ip = String.format("%d.%d.%d.%d", (ipAddress & 0xff), (ipAddress >> 8 & 0xff), (ipAddress >> 16 & 0xff), (ipAddress >> 24 & 0xff));

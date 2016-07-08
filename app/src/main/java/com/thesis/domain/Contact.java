@@ -1,46 +1,42 @@
 package com.thesis.domain;
 
+import android.text.TextUtils;
+
 public class Contact {
-	private String name;
-	private String key;
 
-	public Contact() {
-		super();
-	}
+    private User user;
+    private String masterKey;
+    private boolean isStartConversation;
 
-	public Contact(String name, String key) {
-		super();
-		this.name = name;
-		this.key = key;
-	}
-	
-	public Contact(String name) {
-		super();
-		this.name = name;
-	}
+    public Contact(User user) {
+        this.user = user;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public User getUser() {
+        return user;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setUser(User user) {
+        this.user = user;
+    }
 
-	public String getKey() {
-		return key;
-	}
+    public String getMasterKey() {
+        return masterKey;
+    }
 
-	public void setKey(String key) {
-		this.key = key;
-	}
+    public void setMasterKey(String masterKey) {
+        this.masterKey = masterKey;
+    }
 
-	@Override
-	public String toString() {
-		return "Contact [name=" + name + ", key=" + key + "]";
-	}
-	
-	public String toStringNameOnly() {
-		return "" + name +"";
-	}
+    public boolean isStartConversation() {
+        return isStartConversation;
+    }
+
+    public void setStartConversation(boolean startConversation) {
+        isStartConversation = startConversation;
+    }
+
+    public boolean isKeyGenerated() {
+        return TextUtils.isEmpty(masterKey);
+    }
 }

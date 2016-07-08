@@ -64,26 +64,26 @@ public class SignUpActivity extends BaseActivity implements OnClickListener {
         String password2 = mEditTextPassword2.getText().toString().trim();
 
         if (TextUtils.isEmpty(username)) {
-            Toast.makeText(SignUpActivity.this, "Please input username", 0)
+            Toast.makeText(SignUpActivity.this, "Please input username", Toast.LENGTH_SHORT)
                     .show();
             return;
         } else if (TextUtils.isEmpty(password1)) {
-            Toast.makeText(SignUpActivity.this, "Please input password", 0)
+            Toast.makeText(SignUpActivity.this, "Please input password", Toast.LENGTH_SHORT)
                     .show();
             return;
         } else if (TextUtils.isEmpty(password2)) {
-            Toast.makeText(SignUpActivity.this, "Please confirm password", 0)
+            Toast.makeText(SignUpActivity.this, "Please confirm password", Toast.LENGTH_SHORT)
                     .show();
             return;
         }
 
         if (password1.compareTo(password2) != 0) {
-            Toast.makeText(SignUpActivity.this, "Confirm password fail", 0)
+            Toast.makeText(SignUpActivity.this, "Confirm password fail", Toast.LENGTH_SHORT)
                     .show();
             return;
         }
 
-        User user = new User(username, password1, Utils.getDeviceIpAddress(this));
+        User user = new User(username, password1, Utils.getDeviceIpAddress());
 
         checkUserExist(user);
 

@@ -63,7 +63,7 @@ public class SignInActivity extends BaseActivity implements OnClickListener {
             return;
         }
 
-        User signInUser = new User(username, password, Utils.getDeviceIpAddress(this));
+        User signInUser = new User(username, password, Utils.getDeviceIpAddress());
         checkUserExist(signInUser);
     }
 
@@ -102,7 +102,7 @@ public class SignInActivity extends BaseActivity implements OnClickListener {
 
     private void signInSuccess(final User user) {
         //update user ipAddress
-        user.setIpAddress(Utils.getDeviceIpAddress(SignInActivity.this));
+        user.setIpAddress(Utils.getDeviceIpAddress());
         Backendless.Persistence.save(user, new AsyncCallback<User>() {
             @Override
             public void handleResponse(User response) {

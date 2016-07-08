@@ -4,6 +4,7 @@ import android.app.Application;
 import android.util.Log;
 
 import com.backendless.Backendless;
+import com.thesis.util.CommonLibs;
 import com.thesis.util.Utils;
 
 /**
@@ -15,6 +16,7 @@ public class ShakeShareApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
+        CommonLibs.setsApp(this);
         initBackend();
     }
 
@@ -23,4 +25,6 @@ public class ShakeShareApplication extends Application {
         String appVersion = "v1";
         Backendless.initApp(this, Utils.APP_ID, Utils.SECRET_KEY, appVersion);
     }
+
+
 }
