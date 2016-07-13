@@ -1,7 +1,6 @@
 package com.thesis.login;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -13,7 +12,7 @@ import com.example.shakeshare.R;
 import com.thesis.domain.Contact;
 import com.thesis.domain.User;
 import com.thesis.shakeshare.EntryActivity;
-import com.thesis.sms.MessageActivity;
+import com.thesis.util.CommonLibs;
 import com.thesis.util.Utils;
 
 
@@ -21,7 +20,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -39,12 +37,11 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 public class ContactsActivity extends Activity implements OnClickListener {
     private ListView lv;
-    private List<Map<String, Object>> data;
+    private MyAdapter myAdapter;
 
     private User mUser;
 
@@ -63,17 +60,27 @@ public class ContactsActivity extends Activity implements OnClickListener {
         bt_add_contact.setOnClickListener(this);
 
         lv = (ListView) findViewById(R.id.lv);
+        myAdapter = new MyAdapter();
 
         getAllUsers();
 
     }
 
     private void getAllUsers() {
+
+        if (CommonLibs.getsContactList()!=null&&CommonLibs.getsContactList().size()>0){
+            Log.d(Utils.TAG, "getAllUsers, already constructed the contact list, no need to fetch from online. list size:"+CommonLibs.getsContactList().size());
+            contacts = CommonLibs.getsContactList();
+            updateListView();
+            return;
+        }
+
         Backendless.Persistence.of(User.class).find(new AsyncCallback<BackendlessCollection<User>>() {
             @Override
             public void handleResponse(BackendlessCollection<User> response) {
                 Log.d(Utils.TAG, "getAllUsers, handleResponse:" + response.toString());
                 List<User> data = response.getData();
+                CommonLibs.setsUserList(data);
                 for (User serverUser : data) {
                     if (!serverUser.getOwnerId().equals(mUser.getOwnerId())) {
                         Contact contact = new Contact(serverUser);
@@ -96,7 +103,8 @@ public class ContactsActivity extends Activity implements OnClickListener {
     }
 
     private void updateListView() {
-        lv.setAdapter(new MyAdapter());
+        CommonLibs.setsContactList(contacts);
+        lv.setAdapter(myAdapter);
         this.registerForContextMenu(lv);
     }
 
@@ -148,7 +156,7 @@ public class ContactsActivity extends Activity implements OnClickListener {
         super.onCreateContextMenu(menu, v, menuInfo);
         menu.setHeaderTitle("Please select one");
         menu.add(0, Menu.FIRST, 0, "Edit Contact Name");
-        menu.add(0, Menu.FIRST + 1, 0, "Delete Contact");
+        menu.add(0, Menu.FIRST + 1, 0, "Release Contact");
         menu.add(0, Menu.FIRST + 2, 0, "Generate Key");
         menu.add(0, Menu.FIRST + 3, 0, "Send Message");
     }
@@ -156,13 +164,14 @@ public class ContactsActivity extends Activity implements OnClickListener {
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo menuInfo;
         menuInfo = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        final Contact contact = contacts.get(menuInfo.position);
         final User contactUser = contacts.get(menuInfo.position).getUser();
         switch (item.getItemId()) {
             case Menu.FIRST:
-                //  editContactName(contactname);
+                    editContactName(contact);
                 break;
             case Menu.FIRST + 1:
-                // deleteContact(contactname);
+                    releaseContact(contact);
                 break;
             case Menu.FIRST + 2:
                 startGenerateKeyActivity(contactUser);
@@ -200,13 +209,13 @@ public class ContactsActivity extends Activity implements OnClickListener {
         }
     }
 
-    private void editContactName(final String contactname) {
+    private void editContactName(final Contact contact) {
         AlertDialog.Builder ad_add_contact = new AlertDialog.Builder(this);
         ad_add_contact.setTitle("Please input contact name");
         final EditText input = new EditText(this);
         ad_add_contact.setView(input);
         ad_add_contact.setCancelable(false);
-        ad_add_contact.setPositiveButton("Save",
+        ad_add_contact.setPositiveButton("SAVE",
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int whichButton) {
@@ -217,6 +226,7 @@ public class ContactsActivity extends Activity implements OnClickListener {
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int whichButton) {
+                        contact.setContactName(input.getText().toString().trim());
                     }
                 });
         AlertDialog alertDialog = ad_add_contact.create();
@@ -226,17 +236,18 @@ public class ContactsActivity extends Activity implements OnClickListener {
         alertDialog.show();
     }
 
-    private void deleteContact(final String contactname) {
+    private void releaseContact(final Contact contact) {
         new AlertDialog.Builder(this)
-                .setTitle("Are you sure to delete " + contactname + "?")
+                .setTitle("Are you sure to drop conversation " + contact.getContactName() + "?")
                 .setPositiveButton("Yes",
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog,
                                                 int whichButton) {
-                                onCreate(null);
+                                contact.setStartConversation(false);
+
                             }
-                        }).setNegativeButton("Cancle", null).show();
+                        }).setNegativeButton("CANCEL", null).show();
     }
 
     private void back2_first_activity() {
@@ -250,7 +261,7 @@ public class ContactsActivity extends Activity implements OnClickListener {
         final EditText input = new EditText(this);
         ad_add_contact.setView(input);
         ad_add_contact.setCancelable(false);
-        ad_add_contact.setPositiveButton("Save",
+        ad_add_contact.setPositiveButton("SAVE",
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int whichButton) {
@@ -258,7 +269,7 @@ public class ContactsActivity extends Activity implements OnClickListener {
                         onCreate(null);
                     }
                 });
-        ad_add_contact.setNegativeButton("Cancle",
+        ad_add_contact.setNegativeButton("CONCEL",
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int whichButton) {

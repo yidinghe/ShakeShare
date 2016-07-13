@@ -78,7 +78,7 @@ public class SignInActivity extends BaseActivity implements OnClickListener {
                     sendToastOnUIThread("No user on the record, please create user.");
                 } else {
                     for (User serverUser : data) {
-                        if (serverUser.getPassword().equals(user.getPassword())) {
+                        if (serverUser.getName().equals(user.getName())&&serverUser.getPassword().equals(user.getPassword())) {
                             Log.d(Utils.TAG, "checkUserExist, user exist:");
                             signInSuccess(serverUser);
                             return;

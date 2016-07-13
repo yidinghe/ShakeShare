@@ -7,6 +7,7 @@ public class Contact {
     private User user;
     private String masterKey;
     private boolean isStartConversation;
+    private String contactName;
 
     public Contact(User user) {
         this.user = user;
@@ -38,5 +39,13 @@ public class Contact {
 
     public boolean isKeyGenerated() {
         return TextUtils.isEmpty(masterKey);
+    }
+
+    public String getContactName() {
+        return contactName;
+    }
+
+    public void setContactName(String contactName) {
+        this.contactName = contactName;
     }
 }
