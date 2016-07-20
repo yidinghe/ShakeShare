@@ -69,14 +69,18 @@ public class EntryActivity extends Activity {
         username = mUser.getName();
         contactname = mContactUser.getName();
 
-        mAccuData.add(new ArrayList<Float>());
-        mAccuData.add(new ArrayList<Float>());
-        mAccuData.add(new ArrayList<Float>());
+
         startSensor();
     }
 
     private void startSensor() {
+        mAccuData = new ArrayList<>();
+        mAccuData.add(new ArrayList<Float>());
+        mAccuData.add(new ArrayList<Float>());
+        mAccuData.add(new ArrayList<Float>());
+        mRecordTag = false;
 
+        mAccuEventListener = new MySensorEventListener();
         mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
 
         if (mSensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION) != null)
@@ -251,6 +255,7 @@ public class EntryActivity extends Activity {
         byte[] keyArray = new byte[byteLength];
 
         byteLength--;
+        mkeySb = new StringBuffer();
 
         for (int i = 0; i < mSensorNum / mWindowLength; i++) {
             mkeySb.append('\n' + "X segment " + i + " : "
@@ -285,13 +290,11 @@ public class EntryActivity extends Activity {
                 .setNeutralButton("Redo", new OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Intent intent = new Intent(EntryActivity.this,
-                                EntryActivity.class);
-                        intent.putExtra("user", mUser);
-                        intent.putExtra("contactUser", mContactUser);
-                        startActivity(intent);
-                        dialog.dismiss();
-                        finish();
+                        if (mSensorManager != null) {
+                            mSensorManager.unregisterListener(mAccuEventListener);
+
+                            startSensor();
+                        }
 //						dialog.dismiss();
                     }
                 })
