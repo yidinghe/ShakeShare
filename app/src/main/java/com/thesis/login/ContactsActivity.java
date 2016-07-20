@@ -2,7 +2,6 @@ package com.thesis.login;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import com.backendless.Backendless;
 import com.backendless.BackendlessCollection;
@@ -11,6 +10,7 @@ import com.backendless.exceptions.BackendlessFault;
 import com.example.shakeshare.R;
 import com.thesis.domain.Contact;
 import com.thesis.domain.User;
+import com.thesis.security.AES;
 import com.thesis.shakeshare.EntryActivity;
 import com.thesis.util.CommonLibs;
 import com.thesis.util.Utils;
@@ -39,6 +39,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class ContactsActivity extends Activity implements OnClickListener {
     private ListView lv;
@@ -214,6 +215,13 @@ public class ContactsActivity extends Activity implements OnClickListener {
                 startGenerateKeyActivity(contactUser);
                 break;
             case Menu.FIRST + 3:
+                try {
+                    String plainText = "nihaonihaonihaonihaonihaonihaonihao1111111111";
+                   String cipherText = AES.encrypt(mContact.getMasterKey(),plainText);
+                    AES.decrypt(mContact.getMasterKey(),cipherText);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 //                Intent intent_message = new Intent(this, MessageActivity.class);
 //                intent_message.putExtra("name", username);
 //                startActivity(intent_message);
@@ -278,17 +286,22 @@ public class ContactsActivity extends Activity implements OnClickListener {
     }
 
     private void releaseContact(final Contact contact) {
-        new AlertDialog.Builder(this)
-                .setTitle("Are you sure to drop conversation " + contact.getContactName() + "?")
-                .setPositiveButton("Yes",
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog,
-                                                int whichButton) {
-                                contact.setStartConversation(false);
+        if (contact.isStartConversation()){
+            new AlertDialog.Builder(this)
+                    .setTitle("Are you sure to drop conversation " + contact.getContactName() + "?")
+                    .setPositiveButton("Yes",
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog,
+                                                    int whichButton) {
+                                    contact.setStartConversation(false);
 
-                            }
-                        }).setNegativeButton("CANCEL", null).show();
+                                }
+                            }).setNegativeButton("CANCEL", null).show();
+        }else{
+            Toast.makeText(ContactsActivity.this, "Not start conversation Yet.", Toast.LENGTH_SHORT).show();
+        }
+
     }
 
     private void back2_first_activity() {
