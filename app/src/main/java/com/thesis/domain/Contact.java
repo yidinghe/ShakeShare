@@ -48,4 +48,13 @@ public class Contact {
     public void setContactName(String contactName) {
         this.contactName = contactName;
     }
+
+    @Override
+    public String toString() {
+        return "Contact{" +
+                "contactName='" + contactName + '\'' +
+                ", isStartConversation=" + isStartConversation +
+                ", masterKey='" + masterKey + '\'' +
+                '}';
+    }
 }

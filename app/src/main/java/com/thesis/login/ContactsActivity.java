@@ -12,6 +12,7 @@ import com.thesis.domain.Contact;
 import com.thesis.domain.User;
 import com.thesis.security.AES;
 import com.thesis.shakeshare.EntryActivity;
+import com.thesis.sms.MessageActivity;
 import com.thesis.util.CommonLibs;
 import com.thesis.util.Utils;
 
@@ -189,7 +190,8 @@ public class ContactsActivity extends Activity implements OnClickListener {
         menu.add(0, Menu.FIRST, 0, "Edit Contact Name");
         menu.add(0, Menu.FIRST + 1, 0, "Release Contact");
         menu.add(0, Menu.FIRST + 2, 0, "Generate Key");
-        menu.add(0, Menu.FIRST + 3, 0, "Send Message");
+        menu.add(0, Menu.FIRST + 3, 0, "Send Message(Client)");
+        menu.add(0, Menu.FIRST + 4, 0, "Send Message(Server)");
     }
 
     public boolean onContextItemSelected(MenuItem item) {
@@ -208,21 +210,33 @@ public class ContactsActivity extends Activity implements OnClickListener {
                 startGenerateKeyActivity(contactUser);
                 break;
             case Menu.FIRST + 3:
-                try {
-                    String plainText = "nihaonihaonihaonihaonihaonihaonihao1111111111";
-                   String cipherText = AES.encrypt(mContact.getMasterKey(),plainText);
-                    AES.decrypt(mContact.getMasterKey(),cipherText);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-//                Intent intent_message = new Intent(this, MessageActivity.class);
-//                intent_message.putExtra("name", username);
-//                startActivity(intent_message);
-//                overridePendingTransition(R.anim.slide_in_right,
-//                        R.anim.slide_out_left);
+                startMessageActivity(mContact, true);
+            case Menu.FIRST + 4:
+                startMessageActivity(mContact, false);
                 break;
         }
         return super.onContextItemSelected(item);
+    }
+
+    private void startMessageActivity(Contact mContact, boolean isClient) {
+        if (!mContact.isKeyGenerated()){
+            Toast.makeText(this,"Not generate Key yet.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        mContact.setStartConversation(true);
+        Intent intent_message = new Intent(this, MessageActivity.class);
+        //Set contact instead of using Parcelable
+        CommonLibs.setsConversationContact(mContact);
+        intent_message.putExtra("name", mUser.getName());
+        intent_message.putExtra("isClient", isClient);
+        startActivity(intent_message);
+        overridePendingTransition(R.anim.slide_in_right,
+                R.anim.slide_out_left);
+
+        Log.d(Utils.TAG, "startMessageActivity,user:"+mUser.toString());
+        Log.d(Utils.TAG, "startMessageActivity,isClient:"+isClient);
+        Log.d(Utils.TAG, "startMessageActivity,contact:"+mContact.toString());
+
     }
 
     private void startGenerateKeyActivity(User contactUser) {

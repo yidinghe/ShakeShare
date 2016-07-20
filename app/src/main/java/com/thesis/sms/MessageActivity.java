@@ -1,5 +1,8 @@
 package com.thesis.sms;
 
+import java.io.BufferedReader;
+import java.io.PrintWriter;
+import java.net.Socket;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -23,6 +26,8 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.shakeshare.R;
+import com.thesis.domain.Contact;
+import com.thesis.util.CommonLibs;
 
 public class MessageActivity extends Activity {
 
@@ -43,6 +48,13 @@ public class MessageActivity extends Activity {
     // Client name
     private String name = null;
 
+    private Contact mContact;
+    private boolean mIsClient;
+
+    private Socket mSocket = null;
+    private BufferedReader mIn = null;
+    private PrintWriter out = null;
+
     // JSON flags to identify the kind of JSON response
     private static final String TAG_SELF = "self", TAG_NEW = "new",
             TAG_MESSAGE = "message", TAG_EXIT = "exit";
@@ -59,8 +71,16 @@ public class MessageActivity extends Activity {
         utils = new Utils(getApplicationContext());
 
         // Getting the person name from previous screen
-        Intent i = getIntent();
-        name = i.getStringExtra("name");
+        Intent intent = getIntent();
+        name = intent.getStringExtra("name");
+        mContact = CommonLibs.getsConversationContact();
+        mIsClient = intent.getBooleanExtra("isClient", true);
+
+        if (mIsClient){
+            startClientSocket();
+        }else{
+            startServerSocket();
+        }
 
         btnSend.setOnClickListener(new View.OnClickListener() {
 
@@ -74,10 +94,18 @@ public class MessageActivity extends Activity {
             }
         });
 
-        listMessages = new ArrayList<Message>();
+        listMessages = new ArrayList<>();
 
         adapter = new MessagesListAdapter(this, listMessages);
         listViewMessages.setAdapter(adapter);
+
+    }
+
+    private void startServerSocket() {
+
+    }
+
+    private void startClientSocket() {
 
     }
 

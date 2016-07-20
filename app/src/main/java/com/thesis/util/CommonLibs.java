@@ -16,6 +16,7 @@ public class CommonLibs {
     private static Application sApp;
     private static List<Contact> sContactList;
     private static List<User> sUserList;
+    private static Contact sConversationContact;
 
     public static void setsApp(Application sApp) {
         CommonLibs.sApp = sApp;
@@ -42,6 +43,14 @@ public class CommonLibs {
 
     public static List<User> getsUserList(){
         return sUserList;
+    }
+
+    public static Contact getsConversationContact(){
+        return sConversationContact;
+    }
+
+    public static void setsConversationContact(Contact contact){
+        sConversationContact = contact;
     }
 
 }

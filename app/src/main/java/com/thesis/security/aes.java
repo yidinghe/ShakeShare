@@ -19,12 +19,15 @@ public class AES {
 
     private static final byte[] IV = "01234567890ABCDE".getBytes();
 
-    public static String encrypt(String seed, String clearText) {
-        Log.d(Utils.TAG,"encrypt,seed:"+seed);
+    //TODO remove hardcode key logic and use the real key
+    private static final String HARD_CODE_KEY = "090907070808";
+
+    public static String encrypt(String masterKey, String clearText) {
+        Log.d(Utils.TAG,"encrypt,masterKey:"+masterKey);
         Log.d(Utils.TAG,"encrypt,cleartext:"+clearText);
         byte[] result = null;
         try {
-            result = aesGcmEncrypt(getRawKey(seed), clearText.getBytes(),IV);
+            result = aesGcmEncrypt(getRawKey(HARD_CODE_KEY), clearText.getBytes(),IV);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -34,12 +37,12 @@ public class AES {
 
     }
 
-    public static String decrypt(String seed, String encrypted) {
-        Log.d(Utils.TAG,"decrypt,seed:"+seed);
+    public static String decrypt(String masterKey, String encrypted) {
+        Log.d(Utils.TAG,"decrypt,masterKey:"+masterKey);
         Log.d(Utils.TAG,"decrypt,encrypted:"+encrypted);
         try {
             byte[] enc = Base64.decode(encrypted, Base64.DEFAULT);
-            byte[] result = aesGcmDecrypt(getRawKey(seed), enc, IV);
+            byte[] result = aesGcmDecrypt(getRawKey(masterKey), enc, IV);
             String content = new String(result);
             Log.d(Utils.TAG,"decrypt,result:"+content);
             return content;
