@@ -72,13 +72,6 @@ public class ContactsActivity extends Activity implements OnClickListener {
 
     private void getAllUsers() {
 
-        if (CommonLibs.getsContactList()!=null&&CommonLibs.getsContactList().size()>0){
-            Log.d(Utils.TAG, "getAllUsers, already constructed the contact list, no need to fetch from online. list size:"+CommonLibs.getsContactList().size());
-            contacts = CommonLibs.getsContactList();
-            updateListView();
-            return;
-        }
-
         Backendless.Persistence.of(User.class).find(new AsyncCallback<BackendlessCollection<User>>() {
             @Override
             public void handleResponse(BackendlessCollection<User> response) {
