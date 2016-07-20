@@ -21,6 +21,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Gravity;
@@ -44,6 +45,8 @@ public class ContactsActivity extends Activity implements OnClickListener {
     private MyAdapter myAdapter;
 
     private User mUser;
+
+    private Contact mContact;
 
     private List<Contact> contacts = new ArrayList<>();
 
@@ -128,9 +131,43 @@ public class ContactsActivity extends Activity implements OnClickListener {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             View view = LayoutInflater.from(getApplicationContext()).inflate(R.layout.list_item, null);
-            TextView textView = (TextView) view.findViewById(R.id.tv);
-            User contactUser = contacts.get(position).getUser();
-            textView.setText(contactUser.getName() + "..." + contactUser.getIpAddress());
+            TextView tv_username = (TextView) view.findViewById(R.id.tv_username);
+            TextView tv_contactname = (TextView) view.findViewById(R.id.tv_contactname);
+            TextView tv_ipAddress = (TextView) view.findViewById(R.id.tv_ipAddress);
+            TextView tv_sharedKey = (TextView) view.findViewById(R.id.tv_sharedKey);
+
+            Contact contact = contacts.get(position);
+
+            User contactUser = contact.getUser();
+
+            if (!TextUtils.isEmpty(contactUser.getName())){
+                tv_username.setText("userName:"+contactUser.getName());
+            }
+
+            if (!TextUtils.isEmpty(contactUser.getIpAddress())){
+                tv_ipAddress.setText("ipAddress:"+contactUser.getIpAddress());
+            }
+
+            if (!TextUtils.isEmpty(contact.getContactName())){
+                tv_contactname.setText("contactName:"+contact.getContactName());
+            }else{
+                tv_contactname.setText("contactName: Not set.");
+            }
+
+            if (contact.isKeyGenerated()&&(!TextUtils.isEmpty(contact.getMasterKey()))){
+                tv_sharedKey.setText("sharedKey:"+contact.getMasterKey());
+                tv_sharedKey.setTextColor(getResources().getColor(R.color.text_mark));
+            }else{
+                tv_sharedKey.setText("sharedKey: Not set.");
+            }
+
+            if (contact.isStartConversation()){
+                tv_username.setTextColor(getResources().getColor(R.color.text_mark));
+            }else{
+                tv_username.setTextColor(getResources().getColor(R.color.text_regular));
+            }
+
+
             return view;
         }
     }
@@ -164,14 +201,14 @@ public class ContactsActivity extends Activity implements OnClickListener {
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo menuInfo;
         menuInfo = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        final Contact contact = contacts.get(menuInfo.position);
+        mContact = contacts.get(menuInfo.position);
         final User contactUser = contacts.get(menuInfo.position).getUser();
         switch (item.getItemId()) {
             case Menu.FIRST:
-                    editContactName(contact);
+                    editContactName(mContact);
                 break;
             case Menu.FIRST + 1:
-                    releaseContact(contact);
+                    releaseContact(mContact);
                 break;
             case Menu.FIRST + 2:
                 startGenerateKeyActivity(contactUser);
@@ -192,7 +229,6 @@ public class ContactsActivity extends Activity implements OnClickListener {
         intent.putExtra("user", mUser);
         intent.putExtra("contactUser", contactUser);
         startActivityForResult(intent, Utils.REQUEST_CODE_GENERATE_KEY);
-        startActivity(intent);
         overridePendingTransition(R.anim.slide_in_right,
                 R.anim.slide_out_left);
     }
@@ -202,6 +238,10 @@ public class ContactsActivity extends Activity implements OnClickListener {
         switch (resultCode) {
             case Activity.RESULT_OK:
                 Log.d(Utils.TAG, "onActivityResult,Activity.RESULT_OK.");
+                String generateKey = data.getStringExtra("masterKey");
+                Log.d(Utils.TAG, "generateKey:"+generateKey);
+                mContact.setMasterKey(generateKey);
+                myAdapter.notifyDataSetChanged();
                 break;
             case Activity.RESULT_CANCELED:
                 Log.d(Utils.TAG, "onActivityResult,Activity.RESULT_CANCELED.");
@@ -219,14 +259,15 @@ public class ContactsActivity extends Activity implements OnClickListener {
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        onCreate(null);
+                        contact.setContactName(input.getText().toString().trim());
+                        myAdapter.notifyDataSetChanged();
                     }
                 });
         ad_add_contact.setNegativeButton("CANCEL",
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        contact.setContactName(input.getText().toString().trim());
+
                     }
                 });
         AlertDialog alertDialog = ad_add_contact.create();

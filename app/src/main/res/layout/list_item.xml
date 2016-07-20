@@ -3,21 +3,50 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
-    android:orientation="horizontal" >
-
-    <ImageView
-        android:id="@+id/iv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" >
-    </ImageView>
+    android:orientation="vertical" >
 
     <TextView
-        android:id="@+id/tv"
+        android:id="@+id/tv_username"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft = "20dp"
-        android:textColor="#33FFFF"
+        android:hint="userName"
+        android:textColor="@color/text_regular"
+        android:layout_marginTop="10dp"
         android:textSize="26sp" >
+    </TextView>
+
+    <TextView
+        android:id="@+id/tv_contactname"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft = "20dp"
+        android:hint="contactName"
+        android:textColor="@color/text_regular"
+        android:layout_marginTop="10dp"
+        android:textSize="20sp" >
+    </TextView>
+
+    <TextView
+        android:id="@+id/tv_ipAddress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft = "20dp"
+        android:hint="ipAddress"
+        android:textColor="@color/text_regular"
+        android:layout_marginTop="10dp"
+        android:textSize="20sp" >
+    </TextView>
+
+    <TextView
+        android:id="@+id/tv_sharedKey"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft = "20dp"
+        android:hint="sharedKey"
+        android:textColor="@color/text_regular"
+        android:layout_marginTop="10dp"
+        android:textSize="20sp" >
     </TextView>
 
 </LinearLayout>

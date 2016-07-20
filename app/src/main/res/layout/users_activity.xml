@@ -31,6 +31,7 @@
         android:background="@drawable/mbutton_background"
         android:onClick="click_back2_welcome"
         android:text="@string/back"
+        android:visibility="gone"
         android:textSize="20sp" />
 
 </LinearLayout>

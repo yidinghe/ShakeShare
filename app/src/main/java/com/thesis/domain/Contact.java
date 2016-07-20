@@ -38,7 +38,7 @@ public class Contact {
     }
 
     public boolean isKeyGenerated() {
-        return TextUtils.isEmpty(masterKey);
+        return !TextUtils.isEmpty(masterKey);
     }
 
     public String getContactName() {

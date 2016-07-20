@@ -33,6 +33,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import weborb.util.log.LogHelper;
+
 public class EntryActivity extends Activity {
 
     private String username;
@@ -58,6 +60,8 @@ public class EntryActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_entry);
+
+        Log.d(Utils.TAG,"EntryActivity onCreate");
 
         Intent intent = getIntent();
         mUser = intent.getParcelableExtra("user");
@@ -242,6 +246,12 @@ public class EntryActivity extends Activity {
         List<List<Float>> ySegments = Functions.equalSplitArrayList(mAccuData.get(1), mWindowLength);
         List<List<Float>> zSegments = Functions.equalSplitArrayList(mAccuData.get(2), mWindowLength);
 
+        int byteLength = 3*(mSensorNum / mWindowLength);
+
+        byte[] keyArray = new byte[byteLength];
+
+        byteLength--;
+
         for (int i = 0; i < mSensorNum / mWindowLength; i++) {
             mkeySb.append('\n' + "X segment " + i + " : "
                     + FFT.peakFft(xSegments.get(i)));
@@ -249,7 +259,16 @@ public class EntryActivity extends Activity {
                     + FFT.peakFft(ySegments.get(i)));
             mkeySb.append('\n' + "Z segment " + i + " : "
                     + FFT.peakFft(zSegments.get(i)));
+            keyArray[byteLength] = (byte) FFT.peakFft(xSegments.get(i));
+            keyArray[byteLength-1] = (byte) FFT.peakFft(ySegments.get(i));
+            keyArray[byteLength-2] = (byte) FFT.peakFft(zSegments.get(i));
+            byteLength = byteLength-3;
         }
+
+        final String masterKey = Utils.bytesToHex(keyArray);
+
+        Log.d(Utils.TAG, "masterKey:"+masterKey);
+
 
         builder.setMessage(mkeySb.toString()).setCancelable(false)
                 .setPositiveButton("Confirm", new OnClickListener() {
@@ -257,8 +276,9 @@ public class EntryActivity extends Activity {
                     public void onClick(DialogInterface dialog, int which) {
                         Log.d(Utils.TAG, "KEY:" + mkeySb.toString());
                         Intent returnIntent = new Intent(EntryActivity.this, ContactsActivity.class);
-                        returnIntent.putExtra("signInUser", mUser);
+                        returnIntent.putExtra("masterKey", masterKey);
                         setResult(Activity.RESULT_OK, returnIntent);
+                        dialog.dismiss();
                         finish();
                     }
                 })
@@ -270,6 +290,7 @@ public class EntryActivity extends Activity {
                         intent.putExtra("user", mUser);
                         intent.putExtra("contactUser", mContactUser);
                         startActivity(intent);
+                        dialog.dismiss();
                         finish();
 //						dialog.dismiss();
                     }
@@ -279,6 +300,7 @@ public class EntryActivity extends Activity {
                     public void onClick(DialogInterface dialog, int which) {
                         Intent returnIntent = new Intent(EntryActivity.this, ContactsActivity.class);
                         setResult(Activity.RESULT_CANCELED, returnIntent);
+                        dialog.dismiss();
                         finish();
 //						dialog.dismiss();
                     }
