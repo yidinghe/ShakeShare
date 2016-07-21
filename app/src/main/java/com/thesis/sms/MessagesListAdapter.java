@@ -1,6 +1,7 @@
 package com.thesis.sms;
 
 import com.example.shakeshare.R;
+import com.thesis.domain.Message;
 
 import java.util.List;
 
@@ -53,7 +54,7 @@ public class MessagesListAdapter extends BaseAdapter {
 				.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
 
 		// Identifying the message owner
-		if (messagesItems.get(position).isSelf()) {
+		if (!messagesItems.get(position).isReceived()) {
 			// message belongs to you, so load the right aligned layout
 			convertView = mInflater.inflate(R.layout.list_item_message_right,
 					null);
@@ -66,9 +67,13 @@ public class MessagesListAdapter extends BaseAdapter {
 		TextView lblFrom = (TextView) convertView.findViewById(R.id.lblMsgFrom);
 		TextView txtMsg = (TextView) convertView.findViewById(R.id.txtMsg);
 
-		txtMsg.setText(m.getMessage());
-		lblFrom.setText(m.getFromName());
+		txtMsg.setText(m.getMessageContent());
+		lblFrom.setText(m.getFromUser().toString());
 
 		return convertView;
+	}
+
+	public void addMessage(Message message){
+		messagesItems.add(message);
 	}
 }

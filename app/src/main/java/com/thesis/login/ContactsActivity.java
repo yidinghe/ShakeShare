@@ -227,7 +227,7 @@ public class ContactsActivity extends Activity implements OnClickListener {
         Intent intent_message = new Intent(this, MessageActivity.class);
         //Set contact instead of using Parcelable
         CommonLibs.setsConversationContact(mContact);
-        intent_message.putExtra("name", mUser.getName());
+        intent_message.putExtra("user", mUser);
         intent_message.putExtra("isClient", isClient);
         startActivity(intent_message);
         overridePendingTransition(R.anim.slide_in_right,

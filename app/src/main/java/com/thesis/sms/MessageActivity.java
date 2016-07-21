@@ -1,18 +1,15 @@
 package com.thesis.sms;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.net.URI;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import android.app.Activity;
 import android.content.Intent;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
@@ -26,10 +23,16 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.shakeshare.R;
+import com.google.gson.Gson;
+import com.thesis.BaseActivity;
 import com.thesis.domain.Contact;
+import com.thesis.domain.Message;
+import com.thesis.domain.User;
+import com.thesis.security.AES;
 import com.thesis.util.CommonLibs;
+import com.thesis.util.Utils;
 
-public class MessageActivity extends Activity {
+public class MessageActivity extends BaseActivity {
 
     // LogCat tag
     private static final String TAG = MessageActivity.class.getSimpleName();
@@ -38,26 +41,22 @@ public class MessageActivity extends Activity {
     private EditText inputMsg;
 
 
-    // Chat messages list adapter
-    private MessagesListAdapter adapter;
+    // Chat messages list mMessagesListAdapter
+    private MessagesListAdapter mMessagesListAdapter;
     private List<Message> listMessages;
     private ListView listViewMessages;
 
-    private Utils utils;
 
-    // Client name
-    private String name = null;
+
+    private User mUser;
 
     private Contact mContact;
     private boolean mIsClient;
 
-    private Socket mSocket = null;
-    private BufferedReader mIn = null;
-    private PrintWriter out = null;
+    private Socket mClientSocket;
+    private BufferedReader mClientIn;
+    private PrintWriter mClientOut;
 
-    // JSON flags to identify the kind of JSON response
-    private static final String TAG_SELF = "self", TAG_NEW = "new",
-            TAG_MESSAGE = "message", TAG_EXIT = "exit";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,11 +67,10 @@ public class MessageActivity extends Activity {
         inputMsg = (EditText) findViewById(R.id.inputMsg);
         listViewMessages = (ListView) findViewById(R.id.list_view_messages);
 
-        utils = new Utils(getApplicationContext());
 
         // Getting the person name from previous screen
         Intent intent = getIntent();
-        name = intent.getStringExtra("name");
+        mUser = intent.getParcelableExtra("user");
         mContact = CommonLibs.getsConversationContact();
         mIsClient = intent.getBooleanExtra("isClient", true);
 
@@ -96,8 +94,8 @@ public class MessageActivity extends Activity {
 
         listMessages = new ArrayList<>();
 
-        adapter = new MessagesListAdapter(this, listMessages);
-        listViewMessages.setAdapter(adapter);
+        mMessagesListAdapter = new MessagesListAdapter(this, listMessages);
+        listViewMessages.setAdapter(mMessagesListAdapter);
 
     }
 
@@ -106,7 +104,57 @@ public class MessageActivity extends Activity {
     }
 
     private void startClientSocket() {
+        try {
+            mClientSocket = new Socket(mContact.getUser().getIpAddress(), Utils.SOCKET_PORT);
+            mClientIn = new BufferedReader(new InputStreamReader(mClientSocket
+                    .getInputStream()));
+            mClientOut = new PrintWriter(new BufferedWriter(new OutputStreamWriter(
+                    mClientSocket.getOutputStream())), true);
+        } catch (IOException e) {
+            e.printStackTrace();
+            sendToastOnUIThread(e.getMessage());
+        }
+    }
 
+    private void sendMessage(String messageContent){
+        Message message = constructMessage(messageContent);
+
+        addMessageToListView(message);
+
+        Gson gson = new Gson();
+        String messagePlaintext = gson.toJson(message);
+
+        Log.d(Utils.TAG,"sendMessage,messagePlaintext:"+ messagePlaintext);
+        String messageCipherText = AES.encrypt(mContact.getMasterKey(),messagePlaintext);
+        Log.d(Utils.TAG,"sendMessage,messageCipherText:"+ messageCipherText);
+        if (mIsClient){
+            sendMessageFromClientToServer(messageCipherText);
+        }else{
+            sendMessageFromServerToClient(messageCipherText);
+        }
+
+    }
+
+    private void sendMessageFromServerToClient(String messageCipherText) {
+
+    }
+
+    private void sendMessageFromClientToServer(String messageCipherText) {
+
+    }
+
+    private void addMessageToListView(Message message) {
+        mMessagesListAdapter.addMessage(message);
+        mMessagesListAdapter.notifyDataSetChanged();
+    }
+
+    private Message constructMessage(String message) {
+        Message sendMessage = new Message();
+        sendMessage.setFromUser(mUser);
+        sendMessage.setToUser(mContact.getUser());
+        sendMessage.setReceived(false);
+        sendMessage.setMessageContent(message);
+        return sendMessage;
     }
 
 
@@ -126,7 +174,7 @@ public class MessageActivity extends Activity {
             public void run() {
                 listMessages.add(m);
 
-                adapter.notifyDataSetChanged();
+                mMessagesListAdapter.notifyDataSetChanged();
 
                 // Playing device's notification
                 playBeep();

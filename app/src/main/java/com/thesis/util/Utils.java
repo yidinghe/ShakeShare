@@ -21,6 +21,8 @@ public class Utils {
 
     public static final int REQUEST_CODE_GENERATE_KEY = 1001;
 
+    public static final int SOCKET_PORT = 9999;
+
     final protected static char[] hexArray = "0123456789ABCDEF".toCharArray();
 
     public static String getDeviceIpAddress() {
