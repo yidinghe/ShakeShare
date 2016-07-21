@@ -1,20 +1,20 @@
 package com.thesis.security;
 
-import android.util.Base64;
 import android.util.Log;
 
 import com.thesis.util.Utils;
 
-import java.security.SecureRandom;
 import java.util.Arrays;
 
 import javax.crypto.Cipher;
-import javax.crypto.KeyGenerator;  
 import javax.crypto.SecretKey;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-  
+
+/**
+ * Created by yidinghe on 7/20/16.
+ */
 public class AES {
 
     private static final byte[] IV = "01234567890ABCDE".getBytes();
@@ -33,7 +33,7 @@ public class AES {
         }
         String content = Utils.bytesToHex(result);
         Log.d(Utils.TAG,"encrypt,result:"+content);
-      return content;
+        return content;
 
     }
 
