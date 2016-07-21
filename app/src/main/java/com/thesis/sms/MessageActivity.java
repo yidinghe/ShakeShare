@@ -78,11 +78,7 @@ public class MessageActivity extends BaseActivity implements Runnable {
         mContact = CommonLibs.getsConversationContact();
         mIsClient = intent.getBooleanExtra("isClient", true);
 
-        if (mIsClient){
-            startClientSocket();
-        }else{
-            startServerSocket();
-        }
+        new Thread(MessageActivity.this).start();
 
         btnSend.setOnClickListener(new View.OnClickListener() {
 
@@ -104,6 +100,7 @@ public class MessageActivity extends BaseActivity implements Runnable {
 
     private void startServerSocket() {
         try {
+            Log.d(Utils.TAG,"startServerSocket:");
             mServerSocketObj = new ServerSocket(Utils.SOCKET_PORT);
             mServerSocket = mServerSocketObj.accept();
             mServerIn = new BufferedReader(new InputStreamReader(mServerSocket
@@ -117,6 +114,7 @@ public class MessageActivity extends BaseActivity implements Runnable {
 
     private void startClientSocket() {
         try {
+            Log.d(Utils.TAG,"startClientSocket:");
             mClientSocket = new Socket(mContact.getUser().getIpAddress(), Utils.SOCKET_PORT);
             mClientIn = new BufferedReader(new InputStreamReader(mClientSocket
                     .getInputStream()));
@@ -206,6 +204,13 @@ public class MessageActivity extends BaseActivity implements Runnable {
     @Override
     public void run() {
         try {
+            Log.d(Utils.TAG,"run:");
+            if (mIsClient){
+                startClientSocket();
+            }else{
+                startServerSocket();
+            }
+
             while (true) {
                 Socket socket = null;
                 BufferedReader in = null;
@@ -240,6 +245,8 @@ public class MessageActivity extends BaseActivity implements Runnable {
         Log.d(Utils.TAG,"receive ,messagePlainText:"+ messageContent);
         Gson gson = new Gson();
         Message message = gson.fromJson(messageContent, Message.class);
+        //receiveMessage force set when received
+        message.setReceived(true);
         addMessageToListView(message);
     }
 
@@ -248,19 +255,29 @@ public class MessageActivity extends BaseActivity implements Runnable {
         super.onDestroy();
         if (mIsClient) {
             try {
-                mClientIn.close();
-                mClientOut.close();
-                mClientSocket.close();
+                if (mClientIn!=null)
+                    mClientIn.close();
+                if (mClientOut!=null)
+                    mClientOut.close();
+                if (mClientSocket!=null){
+                    mClientSocket.close();
+                }
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }else{
             try {
-                mServerIn.close();
-                mServerOut.close();
-                mServerSocket.close();
-                mServerSocketObj.close();
+                if (mServerIn!=null)
+                    mServerIn.close();
+                if (mServerOut!=null)
+                    mServerOut.close();
+                if (mServerSocket!=null){
+                    mServerSocket.close();
+                }
+                if (mServerSocketObj!=null){
+                    mServerSocketObj.close();
+                }
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();

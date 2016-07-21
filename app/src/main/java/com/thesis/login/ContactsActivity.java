@@ -211,6 +211,7 @@ public class ContactsActivity extends Activity implements OnClickListener {
                 break;
             case Menu.FIRST + 3:
                 startMessageActivity(mContact, true);
+                break;
             case Menu.FIRST + 4:
                 startMessageActivity(mContact, false);
                 break;
