@@ -31,7 +31,7 @@ public class AES {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        String content = Base64.encodeToString(result,Base64.DEFAULT);
+        String content = Utils.bytesToHex(result);
         Log.d(Utils.TAG,"encrypt,result:"+content);
       return content;
 
@@ -41,8 +41,8 @@ public class AES {
         Log.d(Utils.TAG,"decrypt,masterKey:"+masterKey);
         Log.d(Utils.TAG,"decrypt,encrypted:"+encrypted);
         try {
-            byte[] enc = Base64.decode(encrypted, Base64.DEFAULT);
-            byte[] result = aesGcmDecrypt(getRawKey(masterKey), enc, IV);
+            byte[] enc = Utils.hexStringToBytes(encrypted);
+            byte[] result = aesGcmDecrypt(getRawKey(HARD_CODE_KEY), enc, IV);
             String content = new String(result);
             Log.d(Utils.TAG,"decrypt,result:"+content);
             return content;

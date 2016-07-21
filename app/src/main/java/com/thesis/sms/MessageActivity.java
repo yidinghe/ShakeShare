@@ -225,8 +225,7 @@ public class MessageActivity extends BaseActivity implements Runnable {
                     if (socket.isConnected()) {
                         if (!socket.isInputShutdown()) {
                             if ((mMessageContent = in.readLine()) != null) {
-                                mMessageContent += "\n";
-                                receiveMessage(mMessageContent);
+                                receiveMessage(mMessageContent.trim());
                             } else {
 
                             }
